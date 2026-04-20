@@ -207,6 +207,15 @@ async function aiRefineMapping({ formFields, profile, existingMapping }) {
   return output.mapping || {};
 }
 
+function withTimeout(promise, ms, message) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      setTimeout(() => reject(new Error(message)), ms);
+    })
+  ]);
+}
+
 async function generateAutofillMapping({ formFields, profile }) {
   const deterministic = buildDeterministicMapping(formFields, profile);
   const unknownFields = findUnmappedFields(formFields, deterministic);
@@ -216,11 +225,16 @@ async function generateAutofillMapping({ formFields, profile }) {
   }
 
   try {
-    const aiMapping = await aiRefineMapping({
-      formFields: unknownFields,
-      profile,
-      existingMapping: deterministic
-    });
+    const aiTimeoutMs = Number(process.env.AI_MAPPING_TIMEOUT_MS || 9000) || 9000;
+    const aiMapping = await withTimeout(
+      aiRefineMapping({
+        formFields: unknownFields,
+        profile,
+        existingMapping: deterministic
+      }),
+      aiTimeoutMs,
+      `AI mapping timed out after ${aiTimeoutMs}ms`
+    );
 
     return {
       ...deterministic,

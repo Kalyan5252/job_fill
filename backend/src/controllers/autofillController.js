@@ -58,13 +58,13 @@ async function resolveProfile(req) {
   if (req.user?._id) {
     const saved = await Profile.findOne({ userId: req.user._id });
     if (saved) {
-      return normalizeProfile(saved.toObject());
+      return normalizeProfile(saved.toObject ? saved.toObject() : saved);
     }
     // Single-user fallback mode: if token is present but linked profile is missing,
     // use the most recently updated profile in DB.
-    const fallback = await Profile.findOne({}).sort({ updatedAt: -1, createdAt: -1 });
+    const fallback = await Profile.findLatest();
     if (fallback) {
-      return normalizeProfile(fallback.toObject());
+      return normalizeProfile(fallback.toObject ? fallback.toObject() : fallback);
     }
     return null;
   }
@@ -75,9 +75,9 @@ async function resolveProfile(req) {
   }
 
   // Single-user fallback mode (no auth): use most recently updated profile.
-  const fallback = await Profile.findOne({}).sort({ updatedAt: -1, createdAt: -1 });
+  const fallback = await Profile.findLatest();
   if (fallback) {
-    return normalizeProfile(fallback.toObject());
+    return normalizeProfile(fallback.toObject ? fallback.toObject() : fallback);
   }
 
   return null;

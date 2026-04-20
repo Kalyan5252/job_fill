@@ -4,8 +4,9 @@ const User = require("../models/User");
 
 async function decodeToken(token) {
   const payload = jwt.verify(token, env.JWT_SECRET);
-  const user = await User.findById(payload.sub).select("_id email");
-  return user || null;
+  const user = await User.findById(payload.sub);
+  if (!user) return null;
+  return { _id: user._id, email: user.email };
 }
 
 async function requireAuth(req, res, next) {
