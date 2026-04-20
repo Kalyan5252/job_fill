@@ -1,0 +1,25 @@
+meta {
+  name: Upload Resume
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/profile/resume
+  body: multipartForm
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:multipart-form {
+  resume: @file({{resumePath}})
+}
+
+tests {
+  test("status is 200", function () {
+    expect(res.status).to.equal(200);
+  });
+}

@@ -1,0 +1,32 @@
+# Node
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Env
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+extension/.env
+extension/.env.*
+
+# Secrets / local creds
+*.pem
+*.key
+*.p12
+*.crt
+*.cert
+*.pfx
+secrets/
+
+# OS
+.DS_Store
+
+# Uploads
+backend/uploads/*
+!backend/uploads/.gitkeep

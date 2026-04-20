@@ -1,0 +1,21 @@
+meta {
+  name: Parse Resume
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/profile/resume/parse
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+tests {
+  test("status is 200", function () {
+    expect(res.status).to.equal(200);
+  });
+}

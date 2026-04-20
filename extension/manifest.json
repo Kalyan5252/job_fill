@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Job Autofill Agent",
+  "version": "1.0.0",
+  "description": "AI-powered job application form autofill assistant.",
+  "permissions": ["storage", "activeTab", "scripting", "contextMenus", "debugger"],
+  "host_permissions": ["<all_urls>", "http://localhost:4000/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "commands": {
+    "trigger-autofill": {
+      "suggested_key": {
+        "default": "Alt+Shift+F",
+        "mac": "Command+Shift+F"
+      },
+      "description": "Trigger Job Autofill on current page"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "Job Autofill Agent"
+  }
+}

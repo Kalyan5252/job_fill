@@ -1,0 +1,97 @@
+meta {
+  name: Autofill (MVP unauth payload mode)
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/autofill
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "formFields": [
+      {
+        "selector": "#full_name",
+        "tag": "input",
+        "type": "text",
+        "name": "full_name",
+        "id": "full_name",
+        "label": "Full Name",
+        "placeholder": "Enter your full name",
+        "ariaLabel": "",
+        "required": true,
+        "options": []
+      },
+      {
+        "selector": "#email",
+        "tag": "input",
+        "type": "email",
+        "name": "email",
+        "id": "email",
+        "label": "Email",
+        "placeholder": "name@example.com",
+        "ariaLabel": "",
+        "required": true,
+        "options": []
+      },
+      {
+        "selector": "#phone",
+        "tag": "input",
+        "type": "tel",
+        "name": "phone",
+        "id": "phone",
+        "label": "Phone",
+        "placeholder": "",
+        "ariaLabel": "",
+        "required": false,
+        "options": []
+      },
+      {
+        "selector": "#motivation",
+        "tag": "textarea",
+        "type": "",
+        "name": "motivation",
+        "id": "motivation",
+        "label": "Why do you want to work here?",
+        "placeholder": "",
+        "ariaLabel": "",
+        "required": false,
+        "options": []
+      }
+    ],
+    "userProfile": {
+      "fullName": "{{fullName}}",
+      "firstName": "{{firstName}}",
+      "lastName": "{{lastName}}",
+      "email": "{{profileEmail}}",
+      "phone": "{{profilePhone}}",
+      "location": "{{location}}",
+      "currentTitle": "{{currentTitle}}",
+      "currentCompany": "{{currentCompany}}",
+      "linkedin": "{{linkedin}}",
+      "github": "{{github}}",
+      "website": "{{website}}",
+      "skills": ["{{skill1}}", "{{skill2}}", "{{skill3}}"],
+      "yearsOfExperience": "{{yearsOfExperience}}",
+      "summary": "{{summary}}",
+      "workAuthorization": "{{workAuthorization}}"
+    }
+  }
+}
+
+tests {
+  test("status is 200", function () {
+    expect(res.status).to.equal(200);
+  });
+
+  test("mapping exists", function () {
+    expect(res.body.mapping).to.be.an("object");
+  });
+}

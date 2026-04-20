@@ -1,0 +1,53 @@
+meta {
+  name: Update Me
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{baseUrl}}/api/profile/me
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "fullName": "Kalyan Pendem",
+    "preferredName": "Kalyan",
+    "firstName": "Kalyan",
+    "lastName": "Pendem",
+    "email": "{{email}}",
+    "phone": "+91 9381034364",
+    "location": "Andhra Pradesh, India",
+    "currentTitle": "Full Stack Developer",
+    "currentCompany": "N/A",
+    "linkedin": "https://www.linkedin.com/in/kalyanpendem/",
+    "github": "https://github.com/Kalyan5252",
+    "website": "",
+    "skills": ["Python, TypeScript, JavaScript, MongoDB, SQL, PostgreSQL, Neo4j, Redis, AWS, GCP, Docker, SQS, Lambda, React, Node.js, Express.js, Next.js, REST APIs, GraphQL, Jest, Git, Linux/Unix, RAG, LLM pipelines, LangChain, Microservices architecture, Asynchronous systems, CI/CD pipelines, Authentication & RBAC, Serverless architecture, Knowledge graphs, Prompt engineering"],
+    "yearsOfExperience": "0",
+    "summary": "I build scalable full-stack systems and ship reliably.",
+    "workAuthorization": "Indian",
+    "address": {
+      "line1": "AnnapurnaNagar, 1st line, Guntur",
+      "line2": "Guntur",
+      "city": "Guntur",
+      "state": "Andhra Pradesh",
+      "country": "India"
+    }
+  }
+}
+
+tests {
+  test("status is 200", function () {
+    expect(res.status).to.equal(200);
+  });
+}

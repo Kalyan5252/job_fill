@@ -1,0 +1,36 @@
+meta {
+  name: Signup
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/auth/signup
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "{{email}}",
+    "password": "{{password}}"
+  }
+}
+
+vars:pre-request {
+  email: kalyanpendem007@gmail.com
+}
+
+tests {
+  test("status is 201 or 409", function () {
+    expect([201, 409]).to.include(res.status);
+  });
+  
+  if (res.status === 201 && res.body && res.body.token) {
+    bru.setVar("token", res.body.token);
+  }
+}

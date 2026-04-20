@@ -1,0 +1,43 @@
+meta {
+  name: Get Me
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/profile/me
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+tests {
+  test("status is 200", function () {
+    expect(res.status).to.equal(200);
+  });
+
+  if (res.status === 200 && res.body && res.body.profile) {
+    const p = res.body.profile;
+    bru.setVar("fullName", p.fullName || "");
+    bru.setVar("firstName", p.firstName || "");
+    bru.setVar("lastName", p.lastName || "");
+    bru.setVar("profileEmail", p.email || "");
+    bru.setVar("profilePhone", p.phone || "");
+    bru.setVar("location", p.location || "");
+    bru.setVar("currentTitle", p.currentTitle || "");
+    bru.setVar("currentCompany", p.currentCompany || "");
+    bru.setVar("linkedin", p.linkedin || "");
+    bru.setVar("github", p.github || "");
+    bru.setVar("website", p.website || "");
+    bru.setVar("yearsOfExperience", p.yearsOfExperience || "");
+    bru.setVar("summary", p.summary || "");
+    bru.setVar("workAuthorization", p.workAuthorization || "");
+    const skills = Array.isArray(p.skills) ? p.skills : [];
+    bru.setVar("skill1", skills[0] || "");
+    bru.setVar("skill2", skills[1] || "");
+    bru.setVar("skill3", skills[2] || "");
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AutofillProfile",
+  "type": "object",
+  "properties": {
+    "fullName": { "type": "string" },
+    "preferredName": { "type": "string" },
+    "firstName": { "type": "string" },
+    "lastName": { "type": "string" },
+    "email": { "type": "string" },
+    "phone": { "type": "string" },
+    "location": { "type": "string" },
+    "currentTitle": { "type": "string" },
+    "currentCompany": { "type": "string" },
+    "linkedin": { "type": "string" },
+    "github": { "type": "string" },
+    "website": { "type": "string" },
+    "skills": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "yearsOfExperience": { "type": "string" },
+    "summary": { "type": "string" },
+    "workAuthorization": { "type": "string" },
+    "address": {
+      "type": "object",
+      "properties": {
+        "line1": { "type": "string" },
+        "line2": { "type": "string" },
+        "city": { "type": "string" },
+        "state": { "type": "string" },
+        "country": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["fullName", "email", "phone"],
+  "additionalProperties": true
+}

@@ -1,0 +1,60 @@
+meta {
+  name: Autofill (production auth profile)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/autofill
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "formFields": [
+      {
+        "selector": "#email",
+        "tag": "input",
+        "type": "email",
+        "name": "email",
+        "id": "email",
+        "label": "Email",
+        "placeholder": "name@example.com",
+        "ariaLabel": "",
+        "required": true,
+        "options": []
+      },
+      {
+        "selector": "#phone",
+        "tag": "input",
+        "type": "tel",
+        "name": "phone",
+        "id": "phone",
+        "label": "Phone",
+        "placeholder": "",
+        "ariaLabel": "",
+        "required": false,
+        "options": []
+      }
+    ]
+  }
+}
+
+tests {
+  test("status is 200", function () {
+    expect(res.status).to.equal(200);
+  });
+
+  test("mapping exists", function () {
+    expect(res.body.mapping).to.be.an("object");
+  });
+}
