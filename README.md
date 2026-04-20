@@ -3,7 +3,7 @@
 ## Structure
 
 - `extension/` Chrome MV3 extension
-- `backend/` Node.js + Express + MongoDB API
+- `backend/` Node.js + Express + SQLite API
 - `shared/` shared schema artifacts
 
 ## Quick Start

@@ -147,25 +147,58 @@ async function handleAutofillRequest(payload) {
   try {
     const shouldSendUserProfile = !authToken;
 
-    const data = await fetchWithRetry(
-      `${apiBaseUrl.replace(/\/$/, "")}/api/autofill`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(authToken ? { Authorization: `Bearer ${authToken}` } : {})
+    const requestBody = {
+      formFields,
+      ...(shouldSendUserProfile ? { userProfile: savedLocalProfile || fallbackProfile } : {}),
+      meta: {
+        pageUrl: payload?.pageUrl || "",
+        pageTitle: payload?.pageTitle || ""
+      }
+    };
+
+    let data;
+    try {
+      data = await fetchWithRetry(
+        `${apiBaseUrl.replace(/\/$/, "")}/api/autofill`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(authToken ? { Authorization: `Bearer ${authToken}` } : {})
+          },
+          body: JSON.stringify(requestBody)
         },
-        body: JSON.stringify({
-          formFields,
-          ...(shouldSendUserProfile ? { userProfile: savedLocalProfile || fallbackProfile } : {}),
-          meta: {
-            pageUrl: payload?.pageUrl || "",
-            pageTitle: payload?.pageTitle || ""
-          }
-        })
-      },
-      { retries: retryCount, timeoutMs: requestTimeoutMs }
-    );
+        { retries: retryCount, timeoutMs: requestTimeoutMs }
+      );
+    } catch (primaryError) {
+      // Deployed backend may have a different JWT secret or user DB.
+      // Auto-recover by retrying once without auth for single-user fallback mode.
+      if (authToken && isAuthError(primaryError)) {
+        log("Auth token rejected. Clearing stale token and retrying unauthenticated once.");
+        await chrome.storage.local.set({ authToken: null });
+
+        data = await fetchWithRetry(
+          `${apiBaseUrl.replace(/\/$/, "")}/api/autofill`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              formFields,
+              ...(savedLocalProfile ? { userProfile: savedLocalProfile } : {}),
+              meta: {
+                pageUrl: payload?.pageUrl || "",
+                pageTitle: payload?.pageTitle || ""
+              }
+            })
+          },
+          { retries: retryCount, timeoutMs: requestTimeoutMs }
+        );
+      } else {
+        throw primaryError;
+      }
+    }
 
     if (!data?.mapping || typeof data.mapping !== "object") {
       throw new Error("Invalid response from backend autofill API");
@@ -290,6 +323,15 @@ function guessIfIncludes(haystack, keywords) {
 
 function isNonEmptyObject(value) {
   return !!value && typeof value === "object" && Object.keys(value).length > 0;
+}
+
+function isAuthError(error) {
+  const message = String(error?.message || "").toLowerCase();
+  return message.includes("401")
+    || message.includes("unauthorized")
+    || message.includes("invalid auth token")
+    || message.includes("missing auth token")
+    || message.includes("jwt");
 }
 
 function triggerAutofillInTab(tabId) {

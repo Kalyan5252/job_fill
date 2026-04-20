@@ -30,3 +30,9 @@ secrets/
 # Uploads
 backend/uploads/*
 !backend/uploads/.gitkeep
+
+# SQLite local DB
+backend/data/
+*.sqlite
+*.sqlite3
+*.db
